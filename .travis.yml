@@ -1,0 +1,38 @@
+sudo: required
+language: python
+python:
+  - 3.6
+
+addons:
+  apt:
+    update: true
+    sources:
+      - sourceline: 'ppa:ansible/ansible'
+    packages:
+      - ansible
+
+before_install:
+  # Install Terraform
+  - wget https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip
+  - unzip terraform_0.12.26_linux_amd64.zip
+  - sudo mv terraform /usr/local/bin/
+  - rm terraform_0.12.26_linux_amd64.zip
+  # Install IBM Cloud Terraform plugin
+  - mkdir -p $HOME/.terraform.d/plugins
+  - wget https://github.com/IBM-Cloud/terraform-provider-ibm/releases/download/v1.7.0/linux_amd64.zip
+  - unzip linux_amd64.zip
+  - sudo mv terraform-provider-ibm* $HOME/.terraform.d/plugins/
+  - cd infrastructure/operations && terraform init
+
+script:
+  - terraform plan
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: terraform apply -auto-approve
+    on:
+      branch: master
+~
+~
+

@@ -1,0 +1,9 @@
+- hosts: all
+  order: sorted
+  tasks:
+    - name: testing testing 1 2 3
+      shell: echo "New cluster provisioned: ${ibm_container_cluster.cluster.id} reachable at ${ibm_container_cluster.public_service_endpoint_url}" >> wow && cat wow
+      register: out
+    - debug: var=out.stdout_lines
+~
+
